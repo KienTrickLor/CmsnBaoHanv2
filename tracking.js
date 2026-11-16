@@ -20,7 +20,7 @@
       [13.78, 109.22], [13.95, 108.90], [14.00, 108.65]
     ],
     to: [13.9833, 108.0022],                   // điểm đến: Pleiku, Gia Lai
-    days: 4,                                   // trái tim đi hết quãng đường trong bao nhiêu ngày
+    days: 3,                                   // trái tim đi hết quãng đường trong bao nhiêu ngày
     minStartProgress: 0.22,                    // vị trí tối thiểu khi mới gửi (22% - đang qua Thanh Hóa/Nghệ An)
     startAt: "",                               // mốc xuất phát cố định, vd "2026-11-17T09:00:00+07:00"
     drawMs: 3600                               // thời gian trái tim bay từ Hải Phòng tới vị trí hiện tại

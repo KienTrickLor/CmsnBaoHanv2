@@ -2,8 +2,8 @@
    SỬA Ở ĐÂY: tên, lời chúc, ngày yêu nhau, ảnh, nhạc
    ============================================================ */
 const CONFIG = {
-  name: "em yêu",             // tên / biệt danh của người ấy
-  from: "Anh",                // người gửi, ví dụ "Kiên"
+  name: "Bảo Hân iu dấu",             // tên / biệt danh của người ấy
+  from: "Kiên",                // người gửi, ví dụ "Kiên"
   closing: "Yêu em,",         // dòng ngay trước tên người gửi
   introText: "Hôm nay có một điều anh muốn cho em xem.",
   startDate: "",              // ngày yêu nhau dạng "2025-02-14"; để trống thì bỏ câu đếm ngày
@@ -11,7 +11,7 @@ const CONFIG = {
     "Hôm nay là ngày của em. Anh chỉ muốn dừng lại một chút để nói điều anh hay quên nói: cảm ơn em vì đã ở đây.",
     "Em làm cho những ngày bình thường nhất của anh trở nên đáng nhớ. Cười cùng em, bực cùng em, hay chỉ im lặng bên cạnh em, anh đều thấy dễ chịu.",
     "Chúc em tuổi mới bình yên, khoẻ mạnh, và làm được hết những điều em vẫn đang giữ trong lòng.",
-    "Từ ngày {start} đến hôm nay là {days} ngày. Anh muốn còn thật nhiều ngày như thế nữa."
+    "Từ ngày {2026-07-30} đến hôm nay là {2026-11-18} ngày. Anh muốn còn thật nhiều ngày như thế nữa."
   ],
   // Ảnh để cạnh file này, ví dụ: [{ src: "anh1.jpg", caption: "Đà Lạt, 2025" }]
   photos: [],
@@ -20,7 +20,7 @@ const CONFIG = {
   songArtist: "Quang Đăng Trần x ViAM",
   songCover: "anh_van_o_day_cover.jpg",
   music: "anh_van_o_day.mp3",
-  musicStart: 0               // bắt đầu bài mp3 từ giây thứ mấy
+  musicStart: 8               // bắt đầu bài mp3 từ giây thứ mấy
 };
 /* ============================================================ */
 
