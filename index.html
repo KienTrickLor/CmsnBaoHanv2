@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1B0A22">
+<title>Chúc mừng sinh nhật</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="tracking.css">
+</head>
+<body>
+
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<button class="music off" id="music" type="button" aria-label="Bật nhạc" aria-pressed="false">
+  <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z"/>
+    <g class="waves"><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a8 8 0 0 1 0 11"/></g>
+    <path class="slash" d="M4 4l16 16"/>
+  </svg>
+  <span class="music-bars" aria-hidden="true"><i></i><i></i><i></i></span>
+  <span id="musicLabel">Nhạc</span>
+</button>
+
+<!-- Cảnh 0: Phong thư mở đầu -->
+<section class="intro" id="intro">
+  <canvas id="petalsIntro" aria-hidden="true"></canvas>
+  <div class="intro-card">
+    <div class="intro-wax" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+    </div>
+    <p class="for" id="introTo"></p>
+    <p class="say" id="introSay"></p>
+    <button class="open-btn" id="openBtn" type="button">
+      <span>Mở món quà nhỏ</span>
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+  </div>
+</section>
+
+<!-- Cảnh 1: Chiếc bánh sinh nhật 2 tầng & ngọn nến lung linh -->
+<section class="night" id="night" style="--g:0">
+  <div class="night-top" id="nightTop">Nhắm mắt ước một điều thật đẹp nhé ✨</div>
+  <div class="stage">
+    <button class="candle-btn" id="candle" type="button" aria-label="Giữ để thổi nến">
+      <svg viewBox="0 28 340 332" role="img" aria-label="Chiếc bánh sinh nhật có một ngọn nến">
+        <defs>
+          <radialGradient id="haloGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#FFEAA0" stop-opacity=".75"/>
+            <stop offset="45%" stop-color="#FFAE52" stop-opacity=".32"/>
+            <stop offset="100%" stop-color="#FFAE52" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="fg" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stop-color="#E86F2C"/>
+            <stop offset="50%" stop-color="#FFA94D"/>
+            <stop offset="100%" stop-color="#FFF3B8"/>
+          </linearGradient>
+          <linearGradient id="tierBot" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#D98296"/>
+            <stop offset="32%" stop-color="#F1B2C0"/>
+            <stop offset="72%" stop-color="#E598AA"/>
+            <stop offset="100%" stop-color="#C96D84"/>
+          </linearGradient>
+          <linearGradient id="tierTop" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#E8A2B2"/>
+            <stop offset="38%" stop-color="#FAD4DD"/>
+            <stop offset="75%" stop-color="#F1BAC7"/>
+            <stop offset="100%" stop-color="#D6869A"/>
+          </linearGradient>
+          <linearGradient id="icingGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFFDF9"/>
+            <stop offset="65%" stop-color="#FBECE1"/>
+            <stop offset="100%" stop-color="#F2D7C9"/>
+          </linearGradient>
+          <linearGradient id="standGold" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#B98A4E"/>
+            <stop offset="35%" stop-color="#F5D99B"/>
+            <stop offset="65%" stop-color="#DFB46C"/>
+            <stop offset="100%" stop-color="#9E7139"/>
+          </linearGradient>
+          <radialGradient id="berryGrad" cx="35%" cy="30%" r="65%">
+            <stop offset="0%" stop-color="#FF758F"/>
+            <stop offset="55%" stop-color="#D9264E"/>
+            <stop offset="100%" stop-color="#8A112E"/>
+          </radialGradient>
+          <linearGradient id="candleBody" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#F3DDD3"/>
+            <stop offset="45%" stop-color="#FFFDF9"/>
+            <stop offset="100%" stop-color="#E2C4B9"/>
+          </linearGradient>
+        </defs>
+
+        <ellipse cx="170" cy="346" rx="132" ry="11" fill="rgba(8,2,12,.48)"/>
+        <path d="M136 330 Q170 338 204 330 L220 344 Q170 350 120 344 Z" fill="url(#standGold)"/>
+        <ellipse cx="170" cy="328" rx="134" ry="15" fill="url(#standGold)"/>
+        <ellipse cx="170" cy="324" rx="128" ry="13" fill="#F7E8E2"/>
+        <ellipse cx="170" cy="322" rx="116" ry="9" fill="#EFE0DA"/>
+
+        <!-- Tầng dưới -->
+        <path d="M62 240 L62 314 A108 12 0 0 0 278 314 L278 240 Z" fill="url(#tierBot)"/>
+        <path d="M62 278 A108 10 0 0 0 278 278" fill="none" stroke="#FFF6EE" stroke-width="3.5" opacity=".75"/>
+        <path d="M62 282 A108 10 0 0 0 278 282" fill="none" stroke="#B6466B" stroke-width="1.5" opacity=".45"/>
+
+        <g fill="#FFF7F0" opacity=".92">
+          <circle cx="72" cy="316" r="4.8"/><circle cx="86" cy="319" r="5"/><circle cx="101" cy="321" r="5.2"/>
+          <circle cx="117" cy="323" r="5.3"/><circle cx="134" cy="324" r="5.4"/><circle cx="152" cy="325" r="5.5"/>
+          <circle cx="170" cy="325.5" r="5.5"/><circle cx="188" cy="325" r="5.5"/><circle cx="206" cy="324" r="5.4"/>
+          <circle cx="223" cy="323" r="5.3"/><circle cx="239" cy="321" r="5.2"/><circle cx="254" cy="319" r="5"/>
+          <circle cx="268" cy="316" r="4.8"/>
+        </g>
+
+        <ellipse cx="170" cy="240" rx="108" ry="11" fill="#FCECE3"/>
+        <path fill="url(#icingGrad)" d="M62 240
+          Q70 258 78 256 Q86 254 91 268 Q97 281 104 266
+          Q112 252 121 260 Q130 270 137 256 Q145 246 154 265
+          Q162 282 171 263 Q179 248 188 261 Q197 274 205 257
+          Q214 245 223 267 Q231 283 239 262 Q247 248 256 260
+          Q265 271 271 255 Q275 247 278 240 Z"/>
+
+        <g fill="#F4CF8B" opacity=".9">
+          <rect x="88" y="294" width="6" height="2.4" rx="1.2" transform="rotate(-18 88 294)"/>
+          <rect x="128" y="302" width="6" height="2.4" rx="1.2" transform="rotate(14 128 302)"/>
+          <rect x="168" y="296" width="6" height="2.4" rx="1.2" transform="rotate(-8 168 296)"/>
+          <rect x="208" y="301" width="6" height="2.4" rx="1.2" transform="rotate(22 208 301)"/>
+          <rect x="244" y="293" width="6" height="2.4" rx="1.2" transform="rotate(-15 244 293)"/>
+        </g>
+
+        <!-- Tầng trên -->
+        <ellipse cx="170" cy="242" rx="78" ry="8.5" fill="rgba(120,35,68,.22)"/>
+        <path d="M96 176 L96 240 A74 8.5 0 0 0 244 240 L244 176 Z" fill="url(#tierTop)"/>
+        <path d="M96 210 Q114 222 133 211 Q151 223 170 212 Q189 223 207 211 Q226 222 244 210" fill="none" stroke="#FFF7F0" stroke-width="3" stroke-linecap="round" opacity=".85"/>
+
+        <g fill="#FFF7F0" opacity=".94">
+          <circle cx="104" cy="239" r="4.2"/><circle cx="117" cy="241" r="4.4"/><circle cx="131" cy="243" r="4.5"/>
+          <circle cx="146" cy="244" r="4.6"/><circle cx="162" cy="244.8" r="4.6"/><circle cx="178" cy="244.8" r="4.6"/>
+          <circle cx="194" cy="244" r="4.6"/><circle cx="209" cy="243" r="4.5"/><circle cx="223" cy="241" r="4.4"/>
+          <circle cx="236" cy="239" r="4.2"/>
+        </g>
+
+        <ellipse cx="170" cy="176" rx="74" ry="8.5" fill="#FFFDF9"/>
+        <path fill="url(#icingGrad)" d="M96 176
+          Q103 192 111 189 Q119 185 126 201 Q133 215 141 196
+          Q149 182 158 195 Q166 209 175 192 Q183 180 192 198
+          Q200 214 208 195 Q216 182 225 194 Q233 205 239 189
+          Q242 182 244 176 Z"/>
+
+        <g transform="translate(118 171) rotate(-14)">
+          <ellipse cx="0" cy="4" rx="10" ry="3.5" fill="#FFFDF9"/>
+          <path d="M-8 2 C-10 -8 0 -13 0 -13 C0 -13 10 -8 8 2 C6 8 -6 8 -8 2 Z" fill="url(#berryGrad)"/>
+          <path d="M-5 -11 L0 -8 L5 -11 L2 -14 L-2 -14 Z" fill="#5D8C61"/>
+          <circle cx="-3" cy="-4" r=".7" fill="#FFE6A8"/><circle cx="2" cy="-5" r=".7" fill="#FFE6A8"/><circle cx="0" cy="0" r=".7" fill="#FFE6A8"/>
+        </g>
+        <g transform="translate(222 171) rotate(14)">
+          <ellipse cx="0" cy="4" rx="10" ry="3.5" fill="#FFFDF9"/>
+          <path d="M-8 2 C-10 -8 0 -13 0 -13 C0 -13 10 -8 8 2 C6 8 -6 8 -8 2 Z" fill="url(#berryGrad)"/>
+          <path d="M-5 -11 L0 -8 L5 -11 L2 -14 L-2 -14 Z" fill="#5D8C61"/>
+          <circle cx="-2" cy="-5" r=".7" fill="#FFE6A8"/><circle cx="3" cy="-4" r=".7" fill="#FFE6A8"/><circle cx="0" cy="0" r=".7" fill="#FFE6A8"/>
+        </g>
+        <g transform="translate(144 176) rotate(-6) scale(.86)">
+          <ellipse cx="0" cy="4" rx="10" ry="3.5" fill="#FFFDF9"/>
+          <path d="M-8 2 C-10 -8 0 -13 0 -13 C0 -13 10 -8 8 2 C6 8 -6 8 -8 2 Z" fill="url(#berryGrad)"/>
+          <path d="M-5 -11 L0 -8 L5 -11 L2 -14 L-2 -14 Z" fill="#5D8C61"/>
+        </g>
+        <g transform="translate(196 176) rotate(6) scale(.86)">
+          <ellipse cx="0" cy="4" rx="10" ry="3.5" fill="#FFFDF9"/>
+          <path d="M-8 2 C-10 -8 0 -13 0 -13 C0 -13 10 -8 8 2 C6 8 -6 8 -8 2 Z" fill="url(#berryGrad)"/>
+          <path d="M-5 -11 L0 -8 L5 -11 L2 -14 L-2 -14 Z" fill="#5D8C61"/>
+        </g>
+
+        <!-- Ngọn nến -->
+        <ellipse cx="170" cy="176" rx="12" ry="4" fill="#FFFDF9"/>
+        <rect x="163" y="114" width="14" height="62" rx="4" fill="url(#candleBody)"/>
+        <path d="M163 126 L177 134 L177 141 L163 133 Z" fill="#E58CA4" opacity=".88"/>
+        <path d="M163 144 L177 152 L177 159 L163 151 Z" fill="#E58CA4" opacity=".88"/>
+        <path d="M163 162 L177 170 L177 175 L163 167 Z" fill="#E58CA4" opacity=".88"/>
+        <path d="M163 122 L177 130" stroke="#F4CF8B" stroke-width="1.4" opacity=".85"/>
+        <path d="M163 140 L177 148" stroke="#F4CF8B" stroke-width="1.4" opacity=".85"/>
+        <path d="M163 158 L177 166" stroke="#F4CF8B" stroke-width="1.4" opacity=".85"/>
+        <path d="M164 115 Q162 124 164 127 Q166 128 166 124 Z" fill="#FFFDF9"/>
+        <line x1="170" y1="114" x2="170" y2="105" stroke="#331339" stroke-width="2.2" stroke-linecap="round"/>
+
+        <g id="flame" style="display:none">
+          <circle class="halo-ring" cx="170" cy="88" r="54" fill="url(#haloGrad)"/>
+          <path d="M170 54 C186 75 188 94 170 107 C152 94 154 75 170 54 Z" fill="url(#fg)"/>
+          <path d="M170 72 C179 83 180 95 170 105 C160 95 161 83 170 72 Z" fill="#FFE89E" opacity=".9"/>
+          <path d="M170 84 C175 91 175 98 170 104 C165 98 165 91 170 84 Z" fill="#FFFFFF"/>
+          <path class="sparkle-star s1" d="M116 74 L118 80 L124 82 L118 84 L116 90 L114 84 L108 82 L114 80 Z" fill="#FFEAA0"/>
+          <path class="sparkle-star s2" d="M224 68 L225.5 73 L230.5 74.5 L225.5 76 L224 81 L222.5 76 L217.5 74.5 L222.5 73 Z" fill="#F6C8D3"/>
+          <path class="sparkle-star s3" d="M132 46 L133.2 50 L137.2 51.2 L133.2 52.4 L132 56.4 L130.8 52.4 L126.8 51.2 L130.8 50 Z" fill="#FFEAA0"/>
+          <path class="sparkle-star s4" d="M210 102 L211.2 106 L215.2 107.2 L211.2 108.4 L210 112.4 L208.8 108.4 L204.8 107.2 L208.8 106 Z" fill="#FFEAA0"/>
+        </g>
+
+        <circle id="tip" cx="170" cy="86" r="1" fill="none"/>
+        <g transform="translate(170 102)">
+          <path id="smoke" class="smoke" pathLength="120" d="M0 0 C-9 -16 9 -30 0 -48 C-8 -62 8 -74 2 -92"/>
+          <path id="smoke2" class="smoke s-b" pathLength="120" d="M2 -2 C10 -18 -6 -34 4 -52 C11 -66 -4 -78 0 -94"/>
+        </g>
+      </svg>
+    </button>
+  </div>
+  <div class="wish-wrap">
+    <p class="hint" id="hint">Giữ ngón tay lên ngọn nến để thổi.</p>
+    <div class="blow-meter" id="blowMeter" aria-hidden="true">
+      <div class="blow-fill" id="blowFill"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Cảnh 2: Bức thư, Vườn hoa, Trình phát nhạc & Theo dõi Trái Tim Hải Phòng -> Gia Lai -->
+<main class="letter-scene" id="letter" inert aria-hidden="true">
+  <canvas class="petals-bg" id="petalsLetter" aria-hidden="true"></canvas>
+  <div class="sheet">
+    <div class="paper-card">
+      <div class="letter-ornament" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      </div>
+      <h1>
+        <span id="h1a">Chúc mừng</span>
+        <span id="h1b">sinh nhật,</span>
+        <span id="hName"></span>
+      </h1>
+      <div id="paras"></div>
+      <div id="photos"></div>
+      <div class="garden-wrap" id="gardenSlot"></div>
+      <p class="closing" id="closing"></p>
+      <p class="from" id="from"></p>
+
+      <!-- Khung chạy nhạc + 2 Sticker Mèo Bắn Tim hiện ra sau khi lời nhắn chạy xong -->
+      <section class="music-showcase" id="musicShowcase" aria-label="Trình phát nhạc kỷ niệm">
+        <div class="stickers-stage" aria-hidden="true">
+          <!-- Sticker 1: Mèo Xám (Goma) ôm giỏ tim bắn sang phải -->
+          <svg class="cat-sticker left" viewBox="0 0 110 105">
+            <g class="cat-bounce">
+              <ellipse cx="52" cy="96" rx="32" ry="5" fill="rgba(90,26,52,.12)"/>
+              <g class="cat-ear-l">
+                <path d="M26 42 C16 26 22 16 38 26 Z" fill="#A69B97" stroke="#4A3531" stroke-width="2.8" stroke-linejoin="round"/>
+                <path d="M26 38 C21 28 25 22 34 28 Z" fill="#F4979C"/>
+              </g>
+              <g class="cat-ear-r">
+                <path d="M78 40 C88 24 82 14 66 25 Z" fill="#A69B97" stroke="#4A3531" stroke-width="2.8" stroke-linejoin="round"/>
+                <path d="M76 36 C82 27 79 21 70 27 Z" fill="#F4979C"/>
+              </g>
+              <path d="M24 62 C16 40 28 22 52 22 C76 22 88 40 80 62 C83 75 80 92 70 95 L34 95 C24 92 21 75 24 62 Z" fill="#A69B97" stroke="#4A3531" stroke-width="2.8" stroke-linejoin="round"/>
+              <ellipse cx="33" cy="54" rx="5.8" ry="3.4" fill="#F58B94" opacity=".88"/>
+              <ellipse cx="71" cy="54" rx="5.8" ry="3.4" fill="#F58B94" opacity=".88"/>
+              <circle class="cat-eye" cx="41" cy="49" r="3.4" fill="#4A3531"/>
+              <circle class="cat-eye" cx="63" cy="49" r="3.4" fill="#4A3531"/>
+              <path d="M48 53 Q52 50 56 53 Q55 61 52 61 Q49 61 48 53 Z" fill="#F48B94" stroke="#4A3531" stroke-width="2.1" stroke-linejoin="round"/>
+              <path d="M46 52 Q52 55 58 52" fill="none" stroke="#4A3531" stroke-width="2.2" stroke-linecap="round"/>
+
+              <g class="basket-hearts">
+                <path d="M18 76 C12 70 22 63 26 70 C30 63 40 70 34 76 L26 83 Z" fill="#F25764" stroke="#4A3531" stroke-width="2"/>
+                <path d="M28 73 C23 67 32 60 36 67 C40 60 49 67 44 73 L36 80 Z" fill="#FF6B78" stroke="#4A3531" stroke-width="2"/>
+                <path d="M10 80 C5 74 14 68 18 74 C22 68 31 74 26 80 L18 86 Z" fill="#FF7582" stroke="#4A3531" stroke-width="2"/>
+                <path d="M22 80 C17 74 26 68 30 74 C34 68 43 74 38 80 L30 86 Z" fill="#F25764" stroke="#4A3531" stroke-width="2"/>
+              </g>
+              <path d="M10 80 L44 80 L40 96 C39 98 15 98 14 96 Z" fill="#FCD692" stroke="#4A3531" stroke-width="2.4" stroke-linejoin="round"/>
+              <rect x="8" y="77" width="38" height="5" rx="2.5" fill="#FFE3AD" stroke="#4A3531" stroke-width="2.3"/>
+              <path d="M24 85 L34 93 M30 84 L38 90 M26 91 L34 84" stroke="#D9A75C" stroke-width="1.6" stroke-linecap="round"/>
+
+              <g class="cat-arm-throw">
+                <path d="M62 72 C72 68 82 58 84 49 C85 45 79 44 76 48 C72 54 66 60 58 63" fill="#A69B97" stroke="#4A3531" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M75 42 C70 36 78 29 83 35 C88 29 96 36 91 42 L83 50 Z" fill="#FF5C6C" stroke="#4A3531" stroke-width="2"/>
+                <path d="M81 51 C76 45 84 39 89 44 C94 39 101 45 96 51 L89 58 Z" fill="#FF7582" stroke="#4A3531" stroke-width="2"/>
+              </g>
+            </g>
+          </svg>
+
+          <div class="heart-bridge">
+            <svg class="flying-heart from-left h1" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            <svg class="flying-heart from-left h2" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            <svg class="flying-heart from-left h3" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            <svg class="flying-heart from-right h4" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            <svg class="flying-heart from-right h5" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            <svg class="flying-heart from-right h6" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          </div>
+
+          <!-- Sticker 2: Mèo Trắng (Peach) ôm giỏ tim bắn ngược lại -->
+          <svg class="cat-sticker right" viewBox="0 0 110 105">
+            <g transform="translate(110 0) scale(-1 1)">
+              <g class="cat-bounce">
+                <ellipse cx="52" cy="96" rx="32" ry="5" fill="rgba(90,26,52,.12)"/>
+                <g class="cat-ear-l">
+                  <path d="M26 42 C16 26 22 16 38 26 Z" fill="#FFFDF9" stroke="#4A3531" stroke-width="2.8" stroke-linejoin="round"/>
+                  <path d="M26 38 C21 28 25 22 34 28 Z" fill="#F6A4AE"/>
+                </g>
+                <g class="cat-ear-r">
+                  <path d="M78 40 C88 24 82 14 66 25 Z" fill="#FFFDF9" stroke="#4A3531" stroke-width="2.8" stroke-linejoin="round"/>
+                  <path d="M76 36 C82 27 79 21 70 27 Z" fill="#F6A4AE"/>
+                </g>
+                <path d="M24 62 C16 40 28 22 52 22 C76 22 88 40 80 62 C83 75 80 92 70 95 L34 95 C24 92 21 75 24 62 Z" fill="#FFFDF9" stroke="#4A3531" stroke-width="2.8" stroke-linejoin="round"/>
+                <ellipse cx="33" cy="54" rx="6.2" ry="3.6" fill="#FF98A6" opacity=".9"/>
+                <ellipse cx="71" cy="54" rx="6.2" ry="3.6" fill="#FF98A6" opacity=".9"/>
+                <circle class="cat-eye" cx="41" cy="49" r="3.4" fill="#4A3531"/>
+                <circle class="cat-eye" cx="63" cy="49" r="3.4" fill="#4A3531"/>
+                <path d="M48 53 Q52 50 56 53 Q55 61 52 61 Q49 61 48 53 Z" fill="#F48B94" stroke="#4A3531" stroke-width="2.1" stroke-linejoin="round"/>
+                <path d="M46 52 Q52 55 58 52" fill="none" stroke="#4A3531" stroke-width="2.2" stroke-linecap="round"/>
+
+                <g class="basket-hearts">
+                  <path d="M18 76 C12 70 22 63 26 70 C30 63 40 70 34 76 L26 83 Z" fill="#FF5C77" stroke="#4A3531" stroke-width="2"/>
+                  <path d="M28 73 C23 67 32 60 36 67 C40 60 49 67 44 73 L36 80 Z" fill="#FF7A90" stroke="#4A3531" stroke-width="2"/>
+                  <path d="M10 80 C5 74 14 68 18 74 C22 68 31 74 26 80 L18 86 Z" fill="#FF8DA0" stroke="#4A3531" stroke-width="2"/>
+                  <path d="M22 80 C17 74 26 68 30 74 C34 68 43 74 38 80 L30 86 Z" fill="#FF5C77" stroke="#4A3531" stroke-width="2"/>
+                </g>
+                <path d="M10 80 L44 80 L40 96 C39 98 15 98 14 96 Z" fill="#FCD692" stroke="#4A3531" stroke-width="2.4" stroke-linejoin="round"/>
+                <rect x="8" y="77" width="38" height="5" rx="2.5" fill="#FFE3AD" stroke="#4A3531" stroke-width="2.3"/>
+                <path d="M24 85 L34 93 M30 84 L38 90 M26 91 L34 84" stroke="#D9A75C" stroke-width="1.6" stroke-linecap="round"/>
+
+                <g class="cat-arm-throw">
+                  <path d="M62 72 C72 68 82 58 84 49 C85 45 79 44 76 48 C72 54 66 60 58 63" fill="#FFFDF9" stroke="#4A3531" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M75 42 C70 36 78 29 83 35 C88 29 96 36 91 42 L83 50 Z" fill="#FF5C6C" stroke="#4A3531" stroke-width="2"/>
+                  <path d="M81 51 C76 45 84 39 89 44 C94 39 101 45 96 51 L89 58 Z" fill="#FF7582" stroke="#4A3531" stroke-width="2"/>
+                </g>
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        <!-- Khung máy phát nhạc tượng trưng -->
+        <div class="player-card" id="playerCard">
+          <div class="player-top">
+            <div class="vinyl-wrap" id="vinylDisc">
+              <img id="playerCover" src="le_duong_cover.jpg" alt="Bìa đĩa nhạc">
+              <span class="vinyl-hole"></span>
+            </div>
+            <div class="track-meta">
+              <div class="track-badge">
+                <span class="track-badge-dot"></span>
+                <span> giai điệu dành riêng cho em</span>
+              </div>
+              <p class="track-title" id="playerTitle">Lễ Đường</p>
+              <p class="track-artist" id="playerArtist">Kai Đinh</p>
+            </div>
+            <div class="track-heart" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </div>
+          </div>
+
+          <div class="player-progress-wrap">
+            <div class="player-bar-bg">
+              <div class="player-bar-fill" id="playerFill">
+                <span class="player-bar-knob"></span>
+              </div>
+            </div>
+            <div class="player-times">
+              <span id="playerCur">0:00</span>
+              <span id="playerDur">4:09</span>
+            </div>
+          </div>
+
+          <div class="player-controls-deco" aria-hidden="true">
+            <span class="deco-icon small">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+            </span>
+            <span class="deco-icon">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+            </span>
+            <span class="deco-play-pill">
+              <svg class="ico-pause" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+              <svg class="ico-play" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </span>
+            <span class="deco-icon">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+            </span>
+            <span class="deco-icon small">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <div class="letter-actions">
+        <button class="replay fade" id="replay" type="button">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+          <span>Thổi nến lại</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+<script src="tracking.js"></script>
+</body>
+</html>
