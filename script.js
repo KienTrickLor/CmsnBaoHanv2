@@ -11,7 +11,7 @@ const CONFIG = {
     "Hôm nay là ngày của em. Anh chỉ muốn dừng lại một chút để nói điều anh hay quên nói: cảm ơn em vì đã ở đây.",
     "Em làm cho những ngày bình thường nhất của anh trở nên đáng nhớ. Cười cùng em, bực cùng em, hay chỉ im lặng bên cạnh em, anh đều thấy dễ chịu.",
     "Chúc em tuổi mới bình yên, khoẻ mạnh, và làm được hết những điều em vẫn đang giữ trong lòng.",
-    "Từ ngày {2026-07-30} đến hôm nay là {2026-11-18} ngày. Anh muốn còn thật nhiều ngày như thế nữa."
+    "Từ ngày 30-07-2026 đến hôm nay là 111 ngày mình bên nhau. Anh muốn bên em thật nhiều ngày như thế nữa."
   ],
   // Ảnh để cạnh file này, ví dụ: [{ src: "anh1.jpg", caption: "Đà Lạt, 2025" }]
   photos: [],
