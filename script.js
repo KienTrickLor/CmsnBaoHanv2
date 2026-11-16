@@ -15,11 +15,11 @@ const CONFIG = {
   ],
   // Ảnh để cạnh file này, ví dụ: [{ src: "anh1.jpg", caption: "Đà Lạt, 2025" }]
   photos: [],
-  // Nhạc đã được nhúng sẵn bài "Lễ Đường - Kai Đinh" ngay trong file này
-  songTitle: "Lễ Đường",
-  songArtist: "Kai Đinh",
-  songCover: "le_duong_cover.jpg",
-  music: "le_duong.mp3",
+  // Nhạc: bài "Anh vẫn ở đây" (tên file để không dấu, không khoảng trắng cho chắc ăn)
+  songTitle: "Anh Vẫn Ở Đây",
+  songArtist: "Quang Đăng Trần x ViAM",
+  songCover: "anh_van_o_day_cover.jpg",
+  music: "anh_van_o_day.mp3",
   musicStart: 0               // bắt đầu bài mp3 từ giây thứ mấy
 };
 /* ============================================================ */
@@ -493,7 +493,7 @@ const CONFIG = {
   }
 
   function updatePlayerUI(cur, dur) {
-    const total = dur > 0 && isFinite(dur) ? dur : 249.3;
+    const total = dur > 0 && isFinite(dur) ? dur : 274.1;
     const now = Math.min(total, Math.max(0, cur || 0));
     const pct = Math.min(100, Math.max(0, (now / total) * 100));
     if (playerFill) playerFill.style.width = pct.toFixed(2) + "%";
@@ -611,8 +611,19 @@ const CONFIG = {
     }, 50);
   }
 
+  function startSynthFallback() {
+    useSynth = true;
+    ensureAudioCtx();
+    musicWanted = true;
+    setIcon();
+    clearTimeout(seqTimer);
+    stepMusicBox();
+    startSynthTicker();
+  }
+
+  let starting = false;
   function playMusic(fromGesture) {
-    if (musicWanted) return;
+    if (musicWanted || starting) return;
     if (useSynth || !bgm) {
       const ctx = ensureAudioCtx();
       if (!ctx || (ctx.state === "suspended" && !fromGesture)) return;
@@ -624,19 +635,24 @@ const CONFIG = {
       startSynthTicker();
       return;
     }
-    bgm.play().then(() => {
+    starting = true;
+    clearInterval(fadeT);
+    try { bgm.volume = 0; } catch (e) {}
+    let pr;
+    try { pr = bgm.play(); } catch (e) { pr = Promise.reject(e); }
+    Promise.resolve(pr).then(() => {
+      starting = false;
+      if (userMuted) { bgm.pause(); return; }
       musicWanted = true;
       setIcon();
       fade(0.75, 1800);
-    }).catch(() => {
-      if (!fromGesture) return; // Đợi chạm lần đầu nếu trình duyệt chặn autoplay lúc mới vào
-      useSynth = true;
-      ensureAudioCtx();
-      musicWanted = true;
-      setIcon();
-      clearTimeout(seqTimer);
-      stepMusicBox();
-      startSynthTicker();
+    }).catch((err) => {
+      starting = false;
+      // Trình duyệt chặn tự phát (NotAllowedError): KHÔNG chuyển sang nhạc synth,
+      // chỉ đợi lần chạm/bấm tiếp theo rồi thử lại bài mp3.
+      if (err && (err.name === "NotAllowedError" || err.name === "AbortError")) return;
+      // Chỉ khi file mp3 thật sự lỗi/không đọc được mới dùng nhạc dự phòng
+      if (fromGesture && (!bgm || bgm.error || (err && err.name === "NotSupportedError"))) startSynthFallback();
     });
   }
 
@@ -659,13 +675,14 @@ const CONFIG = {
     }
   });
 
-  /* Bắt mọi tương tác/chạm đầu tiên vào bất kỳ chức năng hoặc vị trí nào để bật nhạc ngay */
+  /* Bắt lần chạm/bấm đầu tiên để bật nhạc. Chú ý: chỉ pointerup/touchend/click mới được trình duyệt
+     di động tính là "người dùng đã tương tác"; pointerdown/touchstart thì KHÔNG. */
   function unlockAudioOnGesture(e) {
     if (userMuted || musicWanted) return;
     if (e && e.target && e.target.closest && e.target.closest("#music")) return;
     playMusic(true);
   }
-  ["pointerdown", "touchstart", "click", "keydown"].forEach((ev) => {
+  ["pointerup", "touchend", "click", "keydown"].forEach((ev) => {
     document.addEventListener(ev, unlockAudioOnGesture, { passive: true, capture: true });
   });
 
