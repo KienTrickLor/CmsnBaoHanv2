@@ -1,6 +1,7 @@
 /* ============================================================
    Theo dõi Trái Tim: Điểm đi Hải Phòng -> Điểm nhận Gia Lai
-   Bản đồ tối + Header lộ trình + Nhãn ghim 2 đầu + Sao băng dẫn đường
+   Khi mở bản đồ: Trái tim đứng ở Hải Phòng (0%) rồi mới bay dọc
+   tuyến đường tới vị trí hiện tại theo thời gian thực.
    ============================================================ */
 (() => {
   "use strict";
@@ -20,12 +21,13 @@
     ],
     to: [13.9833, 108.0022],                   // điểm đến: Pleiku, Gia Lai
     days: 4,                                   // trái tim đi hết quãng đường trong bao nhiêu ngày
-    minStartProgress: 0.18,                    // vừa bấm đã thấy trái tim rời Hải Phòng băng qua miền Bắc (18%)
+    minStartProgress: 0.22,                    // vị trí tối thiểu khi mới gửi (22% - đang qua Thanh Hóa/Nghệ An)
     startAt: "",                               // mốc xuất phát cố định, vd "2026-11-17T09:00:00+07:00"
-    drawMs: 3600                               // thời gian vẽ tuyến đường lúc mở
+    drawMs: 3600                               // thời gian trái tim bay từ Hải Phòng tới vị trí hiện tại
   };
 
   const STAGES = [
+    { upTo: 0.02, label: "Xuất phát từ Hải Phòng · Bắt đầu hành trình" },
     { upTo: 0.14, label: "Đã rời Hải Phòng · Qua Ninh Bình" },
     { upTo: 0.28, label: "Đang băng qua Thanh Hóa – Nghệ An" },
     { upTo: 0.44, label: "Đang vượt cung đường Hà Tĩnh – Quảng Bình" },
@@ -114,7 +116,7 @@
   }
   function progressNow() {
     const s = startMs();
-    const baseP = TRACK.minStartProgress || 0.18;
+    const baseP = TRACK.minStartProgress || 0.22;
     if (s === null) return baseP;
     const raw = Math.max(0, (Date.now() - s) / (TRACK.days * 864e5));
     return Math.min(1, baseP + (1 - baseP) * raw);
@@ -127,7 +129,7 @@
   }
   function etaText(p) {
     if (p >= 1) return "Đã tới Gia Lai";
-    const baseP = TRACK.minStartProgress || 0.18;
+    const baseP = TRACK.minStartProgress || 0.22;
     const remRatio = Math.max(0, (1 - p) / (1 - baseP));
     const left = remRatio * TRACK.days * 864e5;
     const d = Math.floor(left / 864e5);
@@ -226,12 +228,11 @@
     mount = function () {
       if (sec) return;
       const L = window.L;
-      const pInit = progressNow();
       sec = document.createElement("section");
       sec.className = "trk";
       sec.setAttribute("aria-label", TRACK.text);
-      sec.style.setProperty("--p", (pInit * 100).toFixed(1) + "%");
-      sec.style.setProperty("--dur", (TRACK.drawMs / 1000) + "s");
+      // Bắt đầu ở 0% (tại Hải Phòng) trước khi bay tới vị trí hiện tại
+      sec.style.setProperty("--p", "0%");
 
       const words = (t) => t.split(" ").map((w, i) =>
         '<span class="trk-w" style="--i:' + i + '" aria-hidden="true">' + w + "</span>").join(" ");
@@ -259,12 +260,12 @@
               '<div class="trk-head-row">' +
                 '<p class="trk-line"><span class="trk-sr">' + TRACK.text + '</span><span class="trk-words">' + words(TRACK.text) + '</span>' +
                   '<span class="trk-dots" aria-hidden="true"><i></i><i></i><i></i></span></p>' +
-                '<span class="trk-pct">' + Math.round(pInit * 100) + '%</span>' +
+                '<span class="trk-pct">0%</span>' +
               '</div>' +
               '<div class="trk-bar" aria-hidden="true"><i></i></div>' +
               '<div class="trk-meta-row">' +
-                '<span class="trk-stage-txt">' + stageText(pInit) + '</span>' +
-                '<p class="trk-eta">' + etaText(pInit) + '</p>' +
+                '<span class="trk-stage-txt">' + stageText(0) + '</span>' +
+                '<p class="trk-eta">' + etaText(progressNow()) + '</p>' +
               '</div>' +
             "</div>" +
           "</div>" +
@@ -288,13 +289,11 @@
       }).addTo(map);
 
       const line = (o) => L.polyline([], Object.assign({ lineCap: "round", lineJoin: "round", interactive: false }, o)).addTo(map);
-      // Tuyến đường dẫn hướng đứt nét
       L.polyline(pts, {
         color: "#D9A8BE", weight: 2.2, opacity: 0.6, dashArray: "4 8",
         lineCap: "round", className: "trk-ghost", interactive: false
       }).addTo(map);
 
-      // 3 lớp tuyến đường phát sáng Neon Rose-Gold
       const glow1 = line({ color: "#FF6B8B", weight: 16, opacity: 0.14 });
       const glow2 = line({ color: "#EC9FB0", weight: 8, opacity: 0.32 });
       const main = line({ color: "#FFF0F5", weight: 3.2, opacity: 1 });
@@ -304,22 +303,18 @@
         interactive: false, keyboard: false, zIndexOffset: z || 0
       }).addTo(map);
 
-      // Ghim Điểm đi: Hải Phòng kèm nhãn nổi
       mk(TRACK.from, "trk-start",
         '<span class="trk-start-pulse"></span><span class="trk-start-dot"></span>' +
         '<div class="trk-pin-badge from-badge"><span class="trk-pin-sub">Điểm đi</span><span class="trk-pin-city">' + TRACK.fromCity + '</span></div>',
         [20, 20], [10, 10], 400);
 
-      // Ghim Điểm nhận: Gia Lai kèm nhãn nổi + sóng lan
       mk(TRACK.to, "trk-end",
         '<i class="trk-rip"></i><i class="trk-rip r2"></i>' + PIN +
         '<div class="trk-pin-badge to-badge"><span class="trk-pin-sub">Điểm nhận</span><span class="trk-pin-city">' + TRACK.toCity + '</span></div>',
         [46, 54], [23, 50], 500);
 
-      // Hạt sao băng năng lượng chạy dọc toàn tuyến Hải Phòng -> Gia Lai
       const comet = mk(TRACK.from, "trk-comet", '<div class="trk-comet-dot"></div>', [12, 12], [6, 6], 800);
 
-      // Trái tim chính đang di chuyển + đàn tim nhỏ bay ra hướng về Gia Lai
       const MINI = [[0, 54, 0, 1, -14], [0.48, 46, 11, 0.82, 12], [0.96, 60, -11, 0.92, -8], [1.44, 42, 7, 0.74, 16], [1.92, 52, -7, 0.86, -18]]
         .map((m) => '<i class="trk-mini" style="--d:' + m[0] + "s;--far:" + m[1] + "px;--side:" + m[2] + "px;--sc:" + m[3] + ";--r:" + m[4] + 'deg"></i>').join("");
       const pkg = mk(TRACK.from, "trk-pkg", '<span class="trk-halo"></span>' + MINI + '<span class="trk-core">' + HEART + "</span>", [46, 46], [23, 23], 1000);
@@ -331,7 +326,7 @@
       fit();
       addEventListener("resize", fit);
 
-      /* ---------- Vẽ tuyến đường & Sao băng dẫn đường ---------- */
+      /* ---------- Vẽ tuyến đường: Trái tim bay từ Hải Phòng (0%) tới vị trí hiện tại ---------- */
       let raf = 0, cometRaf = 0, timer = 0, tick = 0, shown = false, arrived = false;
       const setSeg = (seg) => { glow1.setLatLngs(seg); glow2.setLatLngs(seg); main.setLatLngs(seg); };
 
@@ -348,12 +343,14 @@
         el.style.setProperty("--py", dx.toFixed(3));
       }
 
-      function place(p) {
-        const e = at(TOTAL * p);
-        setSeg(pts.slice(0, e.idx + 1).concat([e.pt]));
+      function applyProgressState(curP) {
+        const e = at(TOTAL * curP);
+        setSeg(curP <= 0.001 ? [] : pts.slice(0, e.idx + 1).concat([e.pt]));
         pkg.setLatLng(e.pt);
         aim(e);
-        return e;
+        sec.style.setProperty("--p", (curP * 100).toFixed(2) + "%");
+        if (pctEl) pctEl.textContent = Math.round(curP * 100) + "%";
+        if (stageEl) stageEl.textContent = stageText(curP);
       }
 
       function startCometLoop() {
@@ -371,10 +368,7 @@
 
       function refresh() {
         const p = progressNow();
-        sec.style.setProperty("--p", (p * 100).toFixed(1) + "%");
-        place(p);
-        if (pctEl) pctEl.textContent = Math.round(p * 100) + "%";
-        if (stageEl) stageEl.textContent = stageText(p);
+        applyProgressState(p);
         etaEl.textContent = etaText(p);
         if (p >= 1 && !arrived) {
           arrived = true;
@@ -390,15 +384,11 @@
         startCometLoop();
         if (reduce) { refresh(); tick = setInterval(refresh, 20000); return; }
         const targetP = progressNow();
-        const target = TOTAL * targetP, t0 = performance.now();
+        const t0 = performance.now();
         (function step(now) {
           const k = Math.min(1, (now - t0) / TRACK.drawMs);
           const curP = targetP * ease(k);
-          const e = at(target * ease(k));
-          setSeg(pts.slice(0, e.idx + 1).concat([e.pt]));
-          pkg.setLatLng(e.pt);
-          if (pctEl) pctEl.textContent = Math.round(curP * 100) + "%";
-          aim(e);
+          applyProgressState(curP);
           if (k < 1) raf = requestAnimationFrame(step);
           else { refresh(); tick = setInterval(refresh, 20000); }
         })(t0);
@@ -408,12 +398,11 @@
         if (shown) return;
         shown = true;
         fit();
-        const p = progressNow();
-        if (pctEl) pctEl.textContent = Math.round(p * 100) + "%";
-        if (stageEl) stageEl.textContent = stageText(p);
-        etaEl.textContent = etaText(p);
+        // Đặt Trái Tim đứng tại Điểm đi Hải Phòng (0%) trước khi phóng đi
+        applyProgressState(0);
+        etaEl.textContent = etaText(progressNow());
         sec.classList.add("in");
-        timer = setTimeout(draw, reduce ? 0 : 900);
+        timer = setTimeout(draw, reduce ? 0 : 750);
       }
 
       function reset() {
@@ -421,10 +410,8 @@
         clearTimeout(timer); cancelAnimationFrame(raf); cancelAnimationFrame(cometRaf); cometRaf = 0; clearInterval(tick);
         sec.classList.add("trk-reset");
         sec.classList.remove("in", "trk-live");
-        setSeg([]);
-        pkg.setLatLng(TRACK.from);
+        applyProgressState(0);
         comet.setLatLng(TRACK.from);
-        aim(at(0));
         void sec.offsetWidth;
         requestAnimationFrame(() => requestAnimationFrame(() => sec.classList.remove("trk-reset")));
       }

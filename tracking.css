@@ -287,9 +287,9 @@
     box-shadow: 0 0 14px #FFE29A, 0 0 24px #FF6B8B;
   }
 
-  /* Gói quà Trái Tim đang di chuyển */
-  .trk-pkg { opacity: 0; transition: opacity .5s ease; }
-  .trk.trk-live .trk-pkg { opacity: 1; }
+  /* Gói quà Trái Tim: hiện sẵn ở Hải Phòng ngay khi mở bản đồ, sau đó bay tới vị trí hiện tại */
+  .trk-pkg { opacity: 0; transition: opacity .55s ease .35s; }
+  .trk.in .trk-pkg, .trk.trk-live .trk-pkg { opacity: 1; }
   .trk-halo {
     position: absolute; inset: -4px; border-radius: 50%;
     background: radial-gradient(circle, rgba(255,184,92,.65), rgba(236,159,176,0) 70%);
@@ -345,7 +345,7 @@
     backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
     box-shadow: 0 14px 32px rgba(0,0,0,.45);
     opacity: 0; transform: translateY(24px);
-    transition: opacity .8s cubic-bezier(.22,1,.36,1) .85s, transform .8s cubic-bezier(.22,1,.36,1) .85s;
+    transition: opacity .8s cubic-bezier(.22,1,.36,1) .65s, transform .8s cubic-bezier(.22,1,.36,1) .65s;
   }
   .trk.in .trk-info { opacity: 1; transform: none; }
   .trk-ico {
@@ -377,10 +377,10 @@
   .trk-w {
     display: inline-block; opacity: 0; transform: translateY(.55em); filter: blur(3px);
     transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1), filter .6s ease;
-    transition-delay: calc(1.15s + var(--i) * .09s);
+    transition-delay: calc(.85s + var(--i) * .09s);
   }
   .trk.in .trk-w { opacity: 1; transform: none; filter: none; }
-  .trk-dots { display: inline-flex; gap: 3px; margin-left: 5px; vertical-align: .12em; opacity: 0; transition: opacity .5s ease 1.8s; }
+  .trk-dots { display: inline-flex; gap: 3px; margin-left: 5px; vertical-align: .12em; opacity: 0; transition: opacity .5s ease 1.4s; }
   .trk.in .trk-dots { opacity: 1; }
   .trk-dots i {
     width: 4px; height: 4px; border-radius: 50%; background: var(--rose, #EC9FB0);
@@ -390,18 +390,17 @@
   .trk-dots i:nth-child(3) { animation-delay: .36s; }
   @keyframes trkDot { 0%, 70%, 100% { transform: translateY(0); opacity: .45; } 35% { transform: translateY(-4px); opacity: 1; } }
 
+  /* Thanh tiến độ được đồng bộ trực tiếp từng khung hình với vị trí bay của Trái Tim */
   .trk-bar {
     position: relative;
     height: 4.5px; margin-top: 9px; border-radius: 999px;
     background: rgba(246,200,211,.16); overflow: visible;
   }
   .trk-bar > i {
-    position: relative; display: block; height: 100%; width: 0; border-radius: inherit;
+    position: relative; display: block; height: 100%; width: var(--p, 0%); border-radius: inherit;
     background: linear-gradient(90deg, #B5446E, #FF6B8B, #FFB85C);
     box-shadow: 0 0 10px rgba(255,107,139,.6);
-    transition: width var(--dur, 3.6s) cubic-bezier(.4,0,.2,1) .95s;
   }
-  .trk.in .trk-bar > i { width: var(--p, 62%); }
   .trk-bar > i::after {
     content: ""; position: absolute; right: -5px; top: 50%;
     width: 10px; height: 10px; margin-top: -5px; border-radius: 50%;

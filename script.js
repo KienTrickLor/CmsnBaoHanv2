@@ -472,8 +472,8 @@ const CONFIG = {
   const letterField = makeField($("#petalsLetter"), { count: 18, min: 6, max: 11, alpha: 0.82, sparkRatio: 0.2, colors: ["#E9A9B4", "#F4C6D0", "#D98FA6"] });
   const burstField = makeField($("#fx"), { count: 0, min: 6, max: 11, alpha: 1, colors: ["#E9A9B4", "#F4C6D0", "#D77A99", "#F6B25E", "#C8567F"] });
 
-  /* ---------- Âm nhạc & Đồng bộ thanh thời lượng ---------- */
-  let bgm = null, useSynth = !CONFIG.music, musicWanted = false, fadeT = 0;
+  /* ---------- Âm nhạc & Tự động bật ngay khi mở hoặc chạm bất kỳ đâu ---------- */
+  let bgm = null, useSynth = !CONFIG.music, musicWanted = false, userMuted = false, fadeT = 0;
   let actx = null, masterGain = null, seqTimer = 0, noteIdx = 0;
   let synthElapsed = 0, synthTimer = 0;
   const SYNTH_TOTAL = 28;
@@ -611,10 +611,12 @@ const CONFIG = {
     }, 50);
   }
 
-  function playMusic() {
+  function playMusic(fromGesture) {
+    if (musicWanted) return;
     if (useSynth || !bgm) {
+      const ctx = ensureAudioCtx();
+      if (!ctx || (ctx.state === "suspended" && !fromGesture)) return;
       useSynth = true;
-      ensureAudioCtx();
       musicWanted = true;
       setIcon();
       clearTimeout(seqTimer);
@@ -625,8 +627,9 @@ const CONFIG = {
     bgm.play().then(() => {
       musicWanted = true;
       setIcon();
-      fade(0.75, 2000);
+      fade(0.75, 1800);
     }).catch(() => {
+      if (!fromGesture) return; // Đợi chạm lần đầu nếu trình duyệt chặn autoplay lúc mới vào
       useSynth = true;
       ensureAudioCtx();
       musicWanted = true;
@@ -645,9 +648,25 @@ const CONFIG = {
     if (bgm) fade(0, 350, () => { if (bgm) bgm.pause(); });
   }
 
-  musicBtn.addEventListener("click", () => {
-    if (musicWanted) stopMusic();
-    else playMusic();
+  musicBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (musicWanted) {
+      userMuted = true;
+      stopMusic();
+    } else {
+      userMuted = false;
+      playMusic(true);
+    }
+  });
+
+  /* Bắt mọi tương tác/chạm đầu tiên vào bất kỳ chức năng hoặc vị trí nào để bật nhạc ngay */
+  function unlockAudioOnGesture(e) {
+    if (userMuted || musicWanted) return;
+    if (e && e.target && e.target.closest && e.target.closest("#music")) return;
+    playMusic(true);
+  }
+  ["pointerdown", "touchstart", "click", "keydown"].forEach((ev) => {
+    document.addEventListener(ev, unlockAudioOnGesture, { passive: true, capture: true });
   });
 
   document.addEventListener("visibilitychange", () => {
@@ -660,6 +679,8 @@ const CONFIG = {
     }
   });
   setIcon();
+  // Thử bật tự động ngay khi tải trang (nếu trình duyệt cho phép)
+  playMusic(false);
 
   /* ---------- Ngọn nến ---------- */
   let state = "dark", holding = false, p = 0, g = 0, gTarget = 1, ig = 0;
@@ -870,7 +891,7 @@ const CONFIG = {
   function begin() {
     if (began) return;
     began = true;
-    playMusic();
+    if (!userMuted) playMusic(true);
     intro.classList.add("leaving");
     setTimeout(lightUp, reduce ? 100 : 760);
     setTimeout(() => { intro.style.visibility = "hidden"; introField.stop(); }, 1200);
