@@ -10,9 +10,9 @@
     fromCity: "Hải Phòng",                     // tên Điểm đi
     toCity: "Gia Lai",                         // tên Điểm nhận
     distanceKm: "1.120 km",                    // quãng đường dọc QL1A - QL19
-    text: "Trái tim đang đến Gia Lai",
+    text: "Tình iu của anh đang đến ",
     btnText: "Nhận trái tim của anh",          // chữ trên nút trước khi bấm
-    doneText: "Trái tim đã đến Gia Lai rồi",   // chữ khi đã đi hết quãng đường
+    doneText: "Trái tim đã đến Em rồi",   // chữ khi đã đi hết quãng đường
     from: [20.8449, 106.6881],                 // điểm xuất phát: Hải Phòng
     via: [                                     // điểm trung gian dọc quốc lộ 1 rồi QL19 lên Tây Nguyên
       [20.25, 105.97], [19.81, 105.78], [18.68, 105.68], [17.47, 106.62],
@@ -20,9 +20,9 @@
       [13.78, 109.22], [13.95, 108.90], [14.00, 108.65]
     ],
     to: [13.9833, 108.0022],                   // điểm đến: Pleiku, Gia Lai
-    days: 3,                                   // trái tim đi hết quãng đường trong bao nhiêu ngày
+    days: 3.5,                                 // trái tim đi hết quãng đường trong bao nhiêu ngày (dùng dấu chấm, vd 3.5)
     minStartProgress: 0.22,                    // vị trí tối thiểu khi mới gửi (22% - đang qua Thanh Hóa/Nghệ An)
-    startAt: "startAt: "2026-11-18T00:00:00+07:00",",                               // mốc xuất phát cố định, vd "2026-11-17T09:00:00+07:00"
+    startAt: "",                               // mốc xuất phát cố định, vd "2026-11-17T09:00:00+07:00"
     drawMs: 3600                               // thời gian trái tim bay từ Hải Phòng tới vị trí hiện tại
   };
 
@@ -114,13 +114,24 @@
     const v = Number(store.get());
     return v > 0 ? v : null;
   }
+  // Thêm ?done=1 vào cuối link: trái tim bay thẳng tới nơi, bỏ qua mọi thời gian chờ
+  const SKIP = (() => {
+    try { return new URLSearchParams(location.search).has("done"); } catch (e) { return false; }
+  })();
   function progressNow() {
+    if (SKIP) return 1;
     const s = startMs();
     const baseP = TRACK.minStartProgress || 0.22;
     if (s === null) return baseP;
     const raw = Math.max(0, (Date.now() - s) / (TRACK.days * 864e5));
     return Math.min(1, baseP + (1 - baseP) * raw);
   }
+  // Nhớ người xem đã từng xem hành trình bay lần đầu hay chưa
+  const SEEN_KEY = "trk_seen_hp_gl";
+  const seen = {
+    get() { try { return localStorage.getItem(SEEN_KEY); } catch (e) { return "1"; } },
+    set() { try { localStorage.setItem(SEEN_KEY, "1"); } catch (e) {} }
+  };
   function stageText(p) {
     for (let i = 0; i < STAGES.length; i++) {
       if (p <= STAGES[i].upTo) return STAGES[i].label;
@@ -384,12 +395,25 @@
         startCometLoop();
         if (reduce) { refresh(); tick = setInterval(refresh, 20000); return; }
         const targetP = progressNow();
+        const baseP = TRACK.minStartProgress || 0.22;
+        // Lần mở bản đồ đầu tiên: bay 0 -> 22% trước, rồi lướt nhẹ tới vị trí thật (nếu đã đi xa hơn 22%).
+        // Các lần sau: bay thẳng 0 -> % hiện tại.
+        const firstTime = !SKIP && !seen.get();
+        seen.set();
+        const midP = firstTime ? Math.min(baseP, targetP) : targetP;
+        const GLIDE_MS = 2200;
         const t0 = performance.now();
         (function step(now) {
-          const k = Math.min(1, (now - t0) / TRACK.drawMs);
-          const curP = targetP * ease(k);
+          const k1 = Math.min(1, (now - t0) / TRACK.drawMs);
+          let curP = midP * ease(k1);
+          let finished = k1 >= 1;
+          if (firstTime && targetP > midP && k1 >= 1) {
+            const k2 = Math.min(1, (now - t0 - TRACK.drawMs) / GLIDE_MS);
+            curP = midP + (targetP - midP) * ease(k2);
+            finished = k2 >= 1;
+          }
           applyProgressState(curP);
-          if (k < 1) raf = requestAnimationFrame(step);
+          if (!finished) raf = requestAnimationFrame(step);
           else { refresh(); tick = setInterval(refresh, 20000); }
         })(t0);
       }
